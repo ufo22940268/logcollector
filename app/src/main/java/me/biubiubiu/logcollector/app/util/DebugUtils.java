@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
  * Created by ccheng on 5/15/14.
  */
 public class DebugUtils {
-    private static void printStream(InputStream errorStream) throws IOException {
+    public static void printStream(InputStream errorStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(errorStream));
         String line = null;
         try {

@@ -73,18 +73,27 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void startRecord() throws IOException {
-        mLogcatProcess = Runtime.getRuntime().exec("logcat");
-        InputStream inputStream = mLogcatProcess.getInputStream();
-        FileOutputStream fileOutputStream = new FileOutputStream(SDCARD_LOG);
-        byte[] bytes = new byte[1024];
-        while (inputStream.read(bytes) != -1) {
-            fileOutputStream.write(bytes);
+        Process process = new ProcessBuilder()
+                .command("logcat")
+                .redirectErrorStream(true)
+                .start();
+        try {
+            InputStream inputStream = process.getInputStream();
+
+            FileOutputStream fileOutputStream = new FileOutputStream(SDCARD_LOG);
+            byte[] bytes = new byte[1024];
+            int len = 0;
+            while ((len = inputStream.read(bytes)) != -1) {
+                fileOutputStream.write(bytes, 0, len);
+            }
+
+            inputStream.close();
+            fileOutputStream.close();
+
+        } finally {
+            process.destroy();
         }
-
-        inputStream.close();
-        fileOutputStream.close();
     }
-
 
     private void stopRecord() {
         if (mLogcatProcess != null) {
