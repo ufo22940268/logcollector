@@ -8,14 +8,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -106,7 +102,7 @@ public class LogcatFragment extends Fragment {
                 mAct.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mLogView.appendLine(finalLine);
+                        mLogView.appendLines(finalLine);
                     }
                 });
             }

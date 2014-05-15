@@ -131,6 +131,7 @@ public class MainActivity extends Activity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // The action bar home/up action should open or close the drawer.
