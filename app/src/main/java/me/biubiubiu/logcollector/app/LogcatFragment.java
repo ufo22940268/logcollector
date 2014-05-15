@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import me.biubiubiu.logcollector.app.ui.LogView;
+import me.biubiubiu.logcollector.app.util.AppConstants;
 import me.biubiubiu.logcollector.app.util.SystemManager;
 
 
@@ -70,6 +71,7 @@ public class LogcatFragment extends Fragment {
             }).start();
         } else {
             stopRecord();
+            getActivity().sendBroadcast(new Intent(AppConstants.ACTION_LOGCAT_STOPPED));
         }
 
         mRecording = !mRecording;
@@ -119,5 +121,9 @@ public class LogcatFragment extends Fragment {
         if (mLogcatProcess != null) {
             mLogcatProcess.destroy();
         }
+    }
+
+    public void onShare(MenuItem item) {
+
     }
 }

@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="me.biubiubiu.logcollector.app.MainActivity" >
 
+    <item android:id="@+id/action_share"
+          android:icon="@drawable/ic_action_share"
+          android:title="分享"
+          android:enabled="false"
+          android:showAsAction="always" />
+
     <item android:id="@+id/action_play"
           android:icon="@drawable/ic_action_play"
           android:title="录制"

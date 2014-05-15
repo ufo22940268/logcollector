@@ -18,6 +18,10 @@ package me.biubiubiu.logcollector.app;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -30,6 +34,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import java.io.File;
+
+import me.biubiubiu.logcollector.app.util.AppConstants;
 
 /**
  * This example illustrates a common usage of the DrawerLayout widget
@@ -67,6 +75,7 @@ public class MainActivity extends Activity {
     private CharSequence mTitle;
     private String[] mPlanetTitles;
     private LogcatFragment mLogcatFragment;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,10 +122,23 @@ public class MainActivity extends Activity {
         if (savedInstanceState == null) {
             selectItem(0);
         }
+
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateStates();
+            }
+        }, new IntentFilter(AppConstants.ACTION_LOGCAT_STOPPED));
+    }
+
+    private void updateStates() {
+        MenuItem item = mMenu.getItem(0);
+        item.setEnabled(new File(LogcatFragment.SDCARD_LOG).exists());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        mMenu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
@@ -143,6 +165,9 @@ public class MainActivity extends Activity {
         switch(item.getItemId()) {
             case R.id.action_play:
                 mLogcatFragment.onToggle(item);
+                return true;
+            case R.id.action_share:
+                mLogcatFragment.onShare(item);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
