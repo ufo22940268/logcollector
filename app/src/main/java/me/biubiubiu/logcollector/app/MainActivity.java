@@ -11,13 +11,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import me.biubiubiu.logcollector.app.ui.LogView;
 import me.biubiubiu.logcollector.app.util.SystemManager;
 
 
@@ -28,6 +33,8 @@ public class MainActivity extends ActionBarActivity {
     TextView mToggle;
     @InjectView(R.id.view_log)
     Button mViewLog;
+    @InjectView(R.id.log_view)
+    LogView mLogView;
     private boolean mRecording;
     private Process mLogcatProcess;
 
@@ -79,12 +86,20 @@ public class MainActivity extends ActionBarActivity {
                 .start();
         try {
             InputStream inputStream = process.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
             FileOutputStream fileOutputStream = new FileOutputStream(SDCARD_LOG);
-            byte[] bytes = new byte[1024];
-            int len = 0;
-            while ((len = inputStream.read(bytes)) != -1) {
-                fileOutputStream.write(bytes, 0, len);
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream));
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null) {
+                bufferedWriter.write(line);
+                final String finalLine = line;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLogView.appendLine(finalLine);
+                    }
+                });
             }
 
             inputStream.close();

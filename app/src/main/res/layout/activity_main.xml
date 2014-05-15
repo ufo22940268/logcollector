@@ -26,5 +26,12 @@
         android:visibility="gone"
         />
 
+    <me.biubiubiu.logcollector.app.ui.LogView
+        android:id="@+id/log_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:background="#66ccff"
+        />
 
 </LinearLayout>
