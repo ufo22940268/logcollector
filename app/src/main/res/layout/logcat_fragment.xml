@@ -5,27 +5,6 @@
               android:orientation="vertical"
               tools:context="me.biubiubiu.logcollector.app.MainActivity">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/toggle"
-            android:text="录制"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <Button
-            android:id="@+id/view_log"
-            android:text="view log"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            />
-    </LinearLayout>
-
     <me.biubiubiu.logcollector.app.ui.LogView
         android:id="@+id/log_view"
         android:layout_width="match_parent"

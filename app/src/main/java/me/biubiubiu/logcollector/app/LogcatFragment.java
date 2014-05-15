@@ -33,13 +33,9 @@ import me.biubiubiu.logcollector.app.util.SystemManager;
 
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class LogcatFragment extends Fragment implements View.OnClickListener {
+public class LogcatFragment extends Fragment {
 
     public static final String SDCARD_LOG = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "a.log";
-    @InjectView(R.id.toggle)
-    TextView mToggle;
-    @InjectView(R.id.view_log)
-    Button mViewLog;
     @InjectView(R.id.log_view)
     LogView mLogView;
     private boolean mRecording;
@@ -58,16 +54,13 @@ public class LogcatFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mToggle.setOnClickListener(this);
-
         mAct = getActivity();
         String apkRoot = "chmod 777 " + mAct.getPackageCodePath();
         SystemManager.RootCommand(apkRoot);
     }
 
 
-    public void onToggle(View view) {
-
+    public void onToggle(MenuItem item) {
         if (!mRecording) {
             new Thread(new Runnable() {
                 @Override
@@ -81,11 +74,10 @@ public class LogcatFragment extends Fragment implements View.OnClickListener {
             }).start();
         } else {
             stopRecord();
-            mViewLog.setVisibility(View.VISIBLE);
         }
 
         mRecording = !mRecording;
-        mToggle.setText(mRecording ? "停止" : "录制");
+        item.setIcon(mRecording ? R.drawable.ic_action_stop : R.drawable.ic_action_play);
     }
 
     public void onViewLog(View view) {
@@ -130,18 +122,6 @@ public class LogcatFragment extends Fragment implements View.OnClickListener {
     private void stopRecord() {
         if (mLogcatProcess != null) {
             mLogcatProcess.destroy();
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.toggle:
-                onToggle(v);
-                break;
-            case R.id.view_log:
-                onViewLog(v);
-                break;
         }
     }
 }

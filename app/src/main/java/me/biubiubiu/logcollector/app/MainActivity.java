@@ -66,6 +66,7 @@ public class MainActivity extends Activity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mPlanetTitles;
+    private LogcatFragment mLogcatFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,22 +139,13 @@ public class MainActivity extends Activity {
             return true;
         }
         // Handle action buttons
-//        switch(item.getItemId()) {
-//            case R.id.action_websearch:
-//                // create intent to perform web search for this planet
-//                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-//                intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
-//                // catch event that there's no activity to handle intent
-//                if (intent.resolveActivity(getPackageManager()) != null) {
-//                    startActivity(intent);
-//                } else {
-//                    Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
-//                }
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-        return super.onOptionsItemSelected(item);
+        switch(item.getItemId()) {
+            case R.id.action_play:
+                mLogcatFragment.onToggle(item);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /* The click listner for ListView in the navigation drawer */
@@ -166,12 +158,12 @@ public class MainActivity extends Activity {
 
     private void selectItem(int position) {
         // update the main content by replacing fragments
-        Fragment fragment = new LogcatFragment();
+        mLogcatFragment = new LogcatFragment();
         Bundle args = new Bundle();
-        fragment.setArguments(args);
+        mLogcatFragment.setArguments(args);
 
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, mLogcatFragment).commit();
 
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
