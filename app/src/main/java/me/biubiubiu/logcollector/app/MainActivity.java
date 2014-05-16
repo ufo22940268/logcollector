@@ -76,6 +76,8 @@ public class MainActivity extends Activity {
     private String[] mPlanetTitles;
     private LogcatFragment mLogcatFragment;
     private Menu mMenu;
+    private DbFragment mDbFragment;
+    private BroadcastReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,27 +115,34 @@ public class MainActivity extends Activity {
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
+//                getActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if (savedInstanceState == null) {
-            selectItem(0);
+            selectItem(1);
         }
 
-        registerReceiver(new BroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 updateStates();
             }
-        }, new IntentFilter(AppConstants.ACTION_LOGCAT_STOPPED));
+        };
+        registerReceiver(mReceiver, new IntentFilter(AppConstants.ACTION_LOGCAT_STOPPED));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(mReceiver);
     }
 
     private void updateStates() {
         MenuItem item = mMenu.getItem(0);
-        item.setEnabled(new File(LogcatFragment.SDCARD_LOG).exists());
+        item.setEnabled(new File(AppConstants.SDCARD_LOG).exists());
     }
 
     @Override
@@ -162,7 +171,7 @@ public class MainActivity extends Activity {
             return true;
         }
         // Handle action buttons
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.action_play:
                 mLogcatFragment.onToggle(item);
                 return true;
@@ -184,12 +193,24 @@ public class MainActivity extends Activity {
 
     private void selectItem(int position) {
         // update the main content by replacing fragments
-        mLogcatFragment = new LogcatFragment();
-        Bundle args = new Bundle();
-        mLogcatFragment.setArguments(args);
+        Fragment frag = null;
+        switch (position) {
+            case 0:
+                Bundle args = new Bundle();
+                mLogcatFragment = new LogcatFragment();
+                mLogcatFragment.setArguments(args);
+                frag = mLogcatFragment;
+                break;
+            case 1:
+                args = new Bundle();
+                mDbFragment = new DbFragment();
+                mDbFragment.setArguments(args);
+                frag = mDbFragment;
+                break;
+        }
 
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, mLogcatFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, frag).commit();
 
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);

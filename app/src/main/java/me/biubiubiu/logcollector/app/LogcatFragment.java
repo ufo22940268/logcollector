@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +31,6 @@ import me.biubiubiu.logcollector.app.util.SystemManager;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class LogcatFragment extends Fragment {
 
-    public static final String SDCARD_LOG = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "a.log";
     @InjectView(R.id.log_view)
     LogView mLogView;
     private boolean mRecording;
@@ -52,8 +50,7 @@ public class LogcatFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mAct = getActivity();
-        String apkRoot = "chmod 777 " + mAct.getPackageCodePath();
-        SystemManager.RootCommand(apkRoot);
+        SystemManager.root(mAct);
     }
 
 
@@ -80,7 +77,7 @@ public class LogcatFragment extends Fragment {
 
     public void onViewLog(View view) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        Uri data = Uri.fromFile(new File(SDCARD_LOG));
+        Uri data = Uri.fromFile(new File(AppConstants.SDCARD_LOG));
         System.out.println("data = " + data);
         intent.setDataAndType(data, "text/plain");
         startActivity(intent);
@@ -95,7 +92,7 @@ public class LogcatFragment extends Fragment {
             InputStream inputStream = process.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
-            FileOutputStream fileOutputStream = new FileOutputStream(SDCARD_LOG);
+            FileOutputStream fileOutputStream = new FileOutputStream(AppConstants.SDCARD_LOG);
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream));
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {

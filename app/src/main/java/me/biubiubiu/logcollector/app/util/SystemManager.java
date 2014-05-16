@@ -44,4 +44,9 @@ public class SystemManager extends Activity
         Log.d("*** DEBUG ***", "Root SUC ");
         return true;
     }
+
+    public static void root(Activity act) {
+        String apkRoot = "chmod 777 " + act.getPackageCodePath();
+        RootCommand(apkRoot);
+    }
 }
