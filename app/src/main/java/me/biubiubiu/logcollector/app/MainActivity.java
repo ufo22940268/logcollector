@@ -15,6 +15,7 @@ package me.biubiubiu.logcollector.app;
  * limitations under the License.
  */
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;

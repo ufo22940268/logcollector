@@ -1,5 +1,6 @@
 package me.biubiubiu.logcollector.app;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
@@ -66,6 +67,14 @@ public class DbFragment extends MenuFragment implements AdapterView.OnItemClickL
 
         mDbDataAdapter = new MyCursorAdapter();
         mList.setAdapter(mDbDataAdapter);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ActionBar actionBar = getActivity().getActionBar();
+        View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.db_actionbar, null, false);
+        actionBar.setCustomView(inflate);
     }
 
     public List<String> showAllTables(SQLiteDatabase ourDatabase) {
