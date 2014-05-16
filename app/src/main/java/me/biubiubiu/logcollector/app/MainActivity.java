@@ -78,6 +78,7 @@ public class MainActivity extends Activity {
     private Menu mMenu;
     private DbFragment mDbFragment;
     private BroadcastReceiver mReceiver;
+    private MenuFragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +150,7 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         mMenu = menu;
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(mFragment.getMenu(), menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -170,17 +171,8 @@ public class MainActivity extends Activity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        // Handle action buttons
-        switch (item.getItemId()) {
-            case R.id.action_play:
-                mLogcatFragment.onToggle(item);
-                return true;
-            case R.id.action_share:
-                mLogcatFragment.onShare(item);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+
+        return mFragment.onOptionsItemSelected(item);
     }
 
     /* The click listner for ListView in the navigation drawer */
@@ -193,24 +185,24 @@ public class MainActivity extends Activity {
 
     private void selectItem(int position) {
         // update the main content by replacing fragments
-        Fragment frag = null;
+        mFragment = null;
         switch (position) {
             case 0:
                 Bundle args = new Bundle();
                 mLogcatFragment = new LogcatFragment();
                 mLogcatFragment.setArguments(args);
-                frag = mLogcatFragment;
+                mFragment = mLogcatFragment;
                 break;
             case 1:
                 args = new Bundle();
                 mDbFragment = new DbFragment();
                 mDbFragment.setArguments(args);
-                frag = mDbFragment;
+                mFragment = mDbFragment;
                 break;
         }
 
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, frag).commit();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, mFragment).commit();
 
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);

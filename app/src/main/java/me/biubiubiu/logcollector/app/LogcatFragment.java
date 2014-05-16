@@ -29,7 +29,7 @@ import me.biubiubiu.logcollector.app.util.SystemManager;
 
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class LogcatFragment extends Fragment {
+public class LogcatFragment extends MenuFragment {
 
     @InjectView(R.id.log_view)
     LogView mLogView;
@@ -81,6 +81,26 @@ public class LogcatFragment extends Fragment {
         System.out.println("data = " + data);
         intent.setDataAndType(data, "text/plain");
         startActivity(intent);
+    }
+
+    @Override
+    public int getMenu() {
+        return R.menu.main;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action buttons
+        switch (item.getItemId()) {
+            case R.id.action_play:
+                onToggle(item);
+                return true;
+            case R.id.action_share:
+                onShare(item);
+                return true;
+            default:
+                return getActivity().onOptionsItemSelected(item);
+        }
     }
 
     private void startRecord() throws IOException {

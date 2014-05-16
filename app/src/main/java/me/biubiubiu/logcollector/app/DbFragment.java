@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -32,7 +33,7 @@ import me.biubiubiu.logcollector.app.util.SystemManager;
 /**
  * Created by ccheng on 5/16/14.
  */
-public class DbFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
+public class DbFragment extends MenuFragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
 
     @InjectView(R.id.table_name)
     Spinner mTableName;
@@ -118,6 +119,17 @@ public class DbFragment extends Fragment implements AdapterView.OnItemClickListe
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
+    @Override
+    public int getMenu() {
+        return R.menu.db_actionbar;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return false;
+    }
+
 
     private class MyCursorAdapter extends CursorAdapter {
 
