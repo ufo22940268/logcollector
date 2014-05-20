@@ -5,16 +5,18 @@ import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import org.sufficientlysecure.rootcommands.RootCommands;
 import org.sufficientlysecure.rootcommands.Shell;
@@ -34,15 +36,18 @@ import me.biubiubiu.logcollector.app.util.SystemManager;
 /**
  * Created by ccheng on 5/16/14.
  */
-public class DbFragment extends MenuFragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
+public class DbTableFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
 
     @InjectView(R.id.table_name)
     Spinner mTableName;
     @InjectView(R.id.list)
     ListView mList;
+    @InjectView(R.id.header)
+    LinearLayout mHeader;
     private ArrayAdapter mTableNameAdapter;
     private SQLiteDatabase mSqLiteDatabase;
     private CursorAdapter mDbDataAdapter;
+    private String mPath;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,8 +61,9 @@ public class DbFragment extends MenuFragment implements AdapterView.OnItemClickL
         super.onViewCreated(view, savedInstanceState);
         SystemManager.root(getActivity());
 
+        mPath = getArguments().getString("db_path");
+
         mSqLiteDatabase = getSQLiteDatabase();
-        Cursor cursor = mSqLiteDatabase.rawQuery("select * from BookFile", null);
 
         mTableNameAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item);
         mTableNameAdapter.addAll(showAllTables(mSqLiteDatabase));
@@ -94,9 +100,8 @@ public class DbFragment extends MenuFragment implements AdapterView.OnItemClickL
         Shell shell = null;
         try {
             shell = Shell.startRootShell();
-            String path = "/data/data/com.ushaqi.zhuishushenqi/databases/zhuishushenqi.db";
             SimpleCommand sc = new SimpleCommand();
-            SimpleCommand command2 = new SimpleCommand("cp " + path + " " + AppConstants.SCARD_DB);
+            SimpleCommand command2 = new SimpleCommand("cp " + mPath + " " + AppConstants.SCARD_DB);
             shell.add(command2).waitForFinish();
         } catch (IOException e) {
             e.printStackTrace();
@@ -120,25 +125,40 @@ public class DbFragment extends MenuFragment implements AdapterView.OnItemClickL
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String tableName = (String) mTableNameAdapter.getItem(position);
+
+        String[] headers = getDbColumnNames(tableName);
+        mHeader.removeAllViews();
+        for (int i = 0; i < headers.length && i < 3; i++) {
+            String header = headers[i];
+            mHeader.addView(getHeaderView(header));
+        }
+
+
         mDbDataAdapter.changeCursor(queryTableCursor(tableName));
         mDbDataAdapter.notifyDataSetChanged();
+
+    }
+
+    private View getHeaderView(String header) {
+        TextView tv = new TextView(getActivity());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.weight = 1;
+        tv.setTextAppearance(getActivity(), R.style.boldText);
+        tv.setLayoutParams(lp);
+
+        tv.setText(header);
+        return tv;
+    }
+
+    private String[] getDbColumnNames(String tableName) {
+        Cursor cursor = mSqLiteDatabase.rawQuery("select * from " + tableName, null);
+        return cursor.getColumnNames();
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-
-    @Override
-    public int getMenu() {
-        return R.menu.db_actionbar;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return false;
-    }
-
 
     private class MyCursorAdapter extends CursorAdapter {
 
@@ -147,7 +167,7 @@ public class DbFragment extends MenuFragment implements AdapterView.OnItemClickL
         private boolean mOverflow;
 
         public MyCursorAdapter() {
-            super(DbFragment.this.getActivity(), null, true);
+            super(DbTableFragment.this.getActivity(), null, true);
         }
 
         @Override

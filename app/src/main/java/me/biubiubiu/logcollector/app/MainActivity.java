@@ -15,9 +15,7 @@ package me.biubiubiu.logcollector.app;
  * limitations under the License.
  */
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -77,7 +75,7 @@ public class MainActivity extends Activity {
     private String[] mPlanetTitles;
     private LogcatFragment mLogcatFragment;
     private Menu mMenu;
-    private DbFragment mDbFragment;
+    private DbListFragment mDbListFragment;
     private BroadcastReceiver mReceiver;
     private MenuFragment mFragment;
 
@@ -124,7 +122,7 @@ public class MainActivity extends Activity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if (savedInstanceState == null) {
-            selectItem(1);
+            selectItem(0);
         }
 
         mReceiver = new BroadcastReceiver() {
@@ -137,8 +135,8 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         unregisterReceiver(mReceiver);
     }
 
@@ -196,9 +194,9 @@ public class MainActivity extends Activity {
                 break;
             case 1:
                 args = new Bundle();
-                mDbFragment = new DbFragment();
-                mDbFragment.setArguments(args);
-                mFragment = mDbFragment;
+                mDbListFragment = new DbListFragment();
+                mDbListFragment.setArguments(args);
+                mFragment = mDbListFragment;
                 break;
         }
 

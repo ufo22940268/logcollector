@@ -1,17 +1,19 @@
 package me.biubiubiu.logcollector.app.ui;
 
+import android.app.Activity;
 import android.content.Context;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import com.github.kevinsawicki.wishlist.SingleTypeAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import me.biubiubiu.logcollector.app.R;
 
 /**
@@ -19,9 +21,10 @@ import me.biubiubiu.logcollector.app.R;
  */
 public class LogView extends ListView {
 
-    private ArrayAdapter<String> mAdapter;
+    private MyAdapter mAdapter;
 
     private boolean mScrolled;
+    private List<String> mLogs = new ArrayList<String>();
 
     public LogView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -34,13 +37,13 @@ public class LogView extends ListView {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item_logcat, android.R.id.text1);
+        mAdapter = new MyAdapter((Activity) getContext(), R.layout.list_item_logcat);
         setAdapter(mAdapter);
     }
 
     public void appendLines(String lines) {
-        mAdapter.add(lines);
-        mAdapter.notifyDataSetChanged();
+        mLogs.add(lines);
+        mAdapter.setItems(mLogs);
 
         if (!mScrolled) {
             post(new Runnable() {
@@ -64,5 +67,36 @@ public class LogView extends ListView {
     public boolean onTouchEvent(MotionEvent ev) {
         mScrolled = true;
         return super.onTouchEvent(ev);
+    }
+
+    public void clean() {
+    }
+
+    private class MyAdapter extends SingleTypeAdapter<String> {
+
+        public MyAdapter(Activity activity, int layoutResourceId) {
+            super(activity, layoutResourceId);
+        }
+
+        @Override
+        protected int[] getChildViewIds() {
+            return new int[] {android.R.id.text1, android.R.id.text2};
+        }
+
+        @Override
+        protected void update(int position, String item) {
+            TextView view = getView(0, TextView.class);
+            String tag = "";
+            String content = "";
+            if (item.contains(":")) {
+                tag = item.substring(0, item.indexOf(":") + 1);
+                content = item.substring(item.indexOf(":") + 1);
+            }
+
+            SpannableString ss = new SpannableString(item);
+            ForegroundColorSpan span = new ForegroundColorSpan(getResources().getColor(R.color.blue));
+            ss.setSpan(span, 0, tag.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
+            view.setText(ss);
+        }
     }
 }

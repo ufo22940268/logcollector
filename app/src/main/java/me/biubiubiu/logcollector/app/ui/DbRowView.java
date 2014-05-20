@@ -45,6 +45,8 @@ public class DbRowView extends LinearLayout {
 
     public void setText(int i, String string) {
         TextView childAt = (TextView) getChildAt(i);
-        childAt.setText(string);
+        if (childAt != null) {
+            childAt.setText(string);
+        }
     }
 }

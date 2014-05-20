@@ -36,6 +36,7 @@ public class LogcatFragment extends MenuFragment {
     private boolean mRecording;
     private Process mLogcatProcess;
     private Activity mAct;
+    private Thread mThread;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,12 +52,10 @@ public class LogcatFragment extends MenuFragment {
 
         mAct = getActivity();
         SystemManager.root(mAct);
-    }
 
-
-    public void onToggle(MenuItem item) {
         if (!mRecording) {
-            new Thread(new Runnable() {
+            mLogView.clean();
+            mThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -65,7 +64,26 @@ public class LogcatFragment extends MenuFragment {
                         e.printStackTrace();
                     }
                 }
-            }).start();
+            });
+            mThread.start();
+        }
+    }
+
+
+    public void onToggle(MenuItem item) {
+        if (!mRecording) {
+            mLogView.clean();
+            mThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        startRecord();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            mThread.start();
         } else {
             stopRecord();
             getActivity().sendBroadcast(new Intent(AppConstants.ACTION_LOGCAT_STOPPED));
