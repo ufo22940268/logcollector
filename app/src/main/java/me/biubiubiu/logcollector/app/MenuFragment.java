@@ -10,4 +10,8 @@ public abstract class MenuFragment extends Fragment {
 
     public abstract int getMenu();
     public abstract boolean onOptionsItemSelected(MenuItem item);
+
+    public void onMenuItemSelected(int featureId, MenuItem item) {
+
+    }
 }

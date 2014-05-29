@@ -153,6 +153,12 @@ public class MainActivity extends Activity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        mFragment.onMenuItemSelected(featureId, item);
+        return true;
+    }
+
     /* Called whenever we call invalidateOptionsMenu() */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {

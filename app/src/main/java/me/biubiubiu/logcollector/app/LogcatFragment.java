@@ -69,6 +69,13 @@ public class LogcatFragment extends MenuFragment {
         }
     }
 
+    @Override
+    public void onMenuItemSelected(int featureId, MenuItem item) {
+        super.onMenuItemSelected(featureId, item);
+        if (item.getItemId() == R.id.action_share) {
+            onShare(item);
+        }
+    }
 
     public void onToggle(MenuItem item) {
         if (!mRecording) {
@@ -134,7 +141,7 @@ public class LogcatFragment extends MenuFragment {
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream));
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
-                bufferedWriter.write(line);
+                bufferedWriter.write(line + "\n");
                 final String finalLine = line;
                 mAct.runOnUiThread(new Runnable() {
                     @Override
@@ -142,6 +149,7 @@ public class LogcatFragment extends MenuFragment {
                         mLogView.appendLines(finalLine);
                     }
                 });
+                bufferedWriter.flush();
             }
 
             inputStream.close();
@@ -159,6 +167,9 @@ public class LogcatFragment extends MenuFragment {
     }
 
     public void onShare(MenuItem item) {
-
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("image/jpeg");
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(AppConstants.SDCARD_LOG)));
+        startActivity(intent);
     }
 }
