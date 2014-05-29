@@ -155,6 +155,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        super.onMenuItemSelected(featureId, item);
         mFragment.onMenuItemSelected(featureId, item);
         return true;
     }
